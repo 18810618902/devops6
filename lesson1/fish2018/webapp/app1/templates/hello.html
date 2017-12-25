@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for i in lans %}
+    {{ i }}
+{% endfor %}
+
+{% for u in users %}
+<li>用户名，ID</li>
+<li>{{ u.name }},{{ u.id }}</li>
+{% endfor %}
+
+<a href="{% url 'add' n1 n2 %}">add</a>
+
+</body>
+</html>
