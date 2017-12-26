@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    hello html
+<P>{{ username }}</P>
+{% for u in users %}
+    {{ u.name }}
+    {{ u.id }}
+{% endfor %}
+<a href="{% url 'add' 30 50 %}">add</a>
+</body>
+</html>
