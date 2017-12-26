@@ -1,0 +1,25 @@
+
+
+hello !!
+{#<p>{{ username }}</p>#}
+{##}
+{#<ul>#}
+{#    {% for i in mylist %}#}
+{#        <li> {{ i }} </li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+{##}
+{##}
+{#<ul>#}
+{#<li>用户名,ID</li>#}
+{#    {% for u in users %}#}
+{##}
+{#        <li>{{ u.name }},{{ u.id }}</li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+{##}
+{##}
+{#<a href="/">hello</a>#}
+{#<a href={% url 'home' %}>hello1</a>#}
+{#<a href={% url 'add' 10 20 %}>hello2</a>#}
+{#<a href={% url 'add' n1  n2 %}>hello3</a>#}
