@@ -37,7 +37,7 @@
     <p class="login-box-msg">Sign in to start your session</p>
 
     <!-- form action="../../index2.html" method="post" -->
-    <form action="#">
+    <form action="#" >
       <div class="form-group has-feedback">
         <input id="user" type="text" class="form-control" placeholder="username">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -99,6 +99,7 @@ $('button').click(function(){
                  status = data.status
                  if (status == 0){
                     location.href='/'
+                     alert('登录成功')
                  } else {
                     console.log(data)
                  }
