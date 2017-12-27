@@ -1,0 +1,26 @@
+<!--
+1. 变量用双大括号
+2. 列表或字典用for循环遍历
+3. url 'xxxx' 这种方式调用url中的name
+-->
+
+<p>my name is {{ name }}</p>
+<ul>
+    {% for lang in lags %}
+    <li>{{ lang }}</li>
+    {% endfor %}
+</ul>
+
+<ul>
+    {% for d in data %}
+    <li>{{ d.name }}, {{ d.id }}</li>
+    {% endfor %}
+</ul>
+
+{% url 'hello' %}
+</br>
+<a href={% url 'hello' %}>hello</a>
+</br>
+<a href={% url 'add' 30 50%}>两个数字相加</a>
+</br>
+<a href={% url 'add' n1 n2 %}>两个数字相加(动态)</a>
