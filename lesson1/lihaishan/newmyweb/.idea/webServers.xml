@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ssh://root@172.16.0.100:22/root/myproject/venv/bin/python" name="ssh://root@172.16.0.100:22/root/myproject/venv/bin/python">
+        <fileTransfer host="172.16.0.100" port="22" accessType="SFTP">
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

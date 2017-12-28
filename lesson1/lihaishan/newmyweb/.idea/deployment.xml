@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="ssh://root@172.16.0.100:22/root/myproject/venv/bin/python" autoUploadExternalChanges="true">
+    <serverData>
+      <paths name="ssh://root@172.16.0.100:22/root/myproject/venv/bin/python">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_831" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
