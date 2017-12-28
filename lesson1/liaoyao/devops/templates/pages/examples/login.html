@@ -36,13 +36,14 @@
   <div class="login-box-body">
     <p class="login-box-msg">Sign in to start your session</p>
 
-    <form action="index2.html" method="post">
+    <form method="post">
+      <!--{% csrf_token %}-->
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Email">
+        <input type="text" class="form-control" placeholder="Text" id="name">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="password" class="form-control" placeholder="Password" id="pwd">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -55,7 +56,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+          <button type="button" class="btn btn-primary btn-block btn-flat" id="submit">Sign In</button>
         </div>
         <!-- /.col -->
       </div>
@@ -92,6 +93,31 @@
       increaseArea: '20%' // optional
     });
   });
+
+  //$(document).ready(function(){
+    $('#submit').click(function(){
+      var name = $('#name').val();
+      var pwd = $('#pwd').val();
+      $.ajax({
+        url: '/login',
+        type: 'POST',
+        data: {name:name,pwd:pwd},
+        success: function(data){
+          console.log(data)
+          if (data.status == 0){
+            location.href = '/'
+            console.log('success')
+          }else{
+            console.log('fail')
+          }
+        },
+        erroe: function(){
+          console.log('error')
+        }
+      })
+    })
+  //})
+
 </script>
 </body>
 </html>

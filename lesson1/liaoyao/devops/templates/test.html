@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src=/static/jquery-3.2.1.min.js>  </script>
+</head>
+<body>
+  <form >
+    <input type="text" id="name"><br>
+    <input type="password" id="pwd">
+    <button type="button" name="button" id='submit'>submit</button>
+  </form>
+</body>
+<script>
+  $('#submit').click(function(){
+    var name = $('#name').val();
+    var pwd = $('#pwd').val();
+    console.log(name);
+    console.log(pwd);
+    $.ajax({
+      url: '/login',
+      type: 'POST',
+      data: {name:name,pwd:pwd},
+      dataType: 'json',
+      success: function(data){
+        console.log(data)
+      },
+      error: function(){
+        console.log('error')
+      }
+    })
+  })
+</script>
+</html>
