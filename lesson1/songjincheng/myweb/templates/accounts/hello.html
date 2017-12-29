@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3 style="color: brown"> Hello World ! {{ username }}</h3>
+
+{% for u in users %}
+    <li>{{ u.name }}, {{ u.id }}</li>
+{% endfor %}
+
+<a href={% url 'add' n1 n2 %}>hello! </a>
+</body>
+</html>
