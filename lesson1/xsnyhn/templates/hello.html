@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<br>
+<p1>hello  {{ username }} </p1>
+<u1>
+    {% for i in lans %}
+        <li>{{ i }}</li>
+    {% endfor %}
+</u1>
+<br>
+<u2>
+    {% for u in users %}
+{#        <li>用户名，ID</li>#}
+        <li>{{ u.name }},{{ u.id }}</li>
+    {% endfor %}
+</u2>
+
+
+{#<a herf="/">hello</a>#}
+<a href={% url 'home'  %}>hello</a>
+{#<a href={% url 'add'  30 50 %}>hello</a>#}
+<a href={% url 'add'  n1 n2 %}>add</a>
+</body>
+</html>
