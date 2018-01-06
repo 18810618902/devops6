@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>kingleoric</title>
+</head>
+<body>
+    <p>{{ username }}</p>
+    <ul>
+        {% for i in lans %}
+            <li>{{ i }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for u in users %}
+            <li>{{ u.name }}, {{ u.id }}</li>
+        {% endfor %}
+    </ul>
+    <a href={% url 'add' n1 n2 %}> hello</a>
+</body>
+</html>
