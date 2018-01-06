@@ -1,7 +1,9 @@
 # 作业：完成用户登录，和退出界面，用户登录认证
 
 
-###├── accounts          # 用户
+## 目录结构
+<pre>
+├── accounts          # 用户
 │   ├── admin.py
 │   ├── apps.py
 │   ├── migrations
@@ -50,4 +52,4 @@
     │   │   ├── pace.html
     │   │   ├── profile.html
     │   │   └── register.html
-  
+  </pre>
