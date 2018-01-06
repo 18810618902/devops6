@@ -52,4 +52,25 @@
     │   │   ├── pace.html
     │   │   ├── profile.html
     │   │   └── register.html
+    
   </pre>
+  
+  
+  ### 项目分析
+  
+  用户登录：
+         前端 ：表单ajax psot提交，用户名，密码
+         后端： 接收用户名，密码，然后鉴权，
+               用户名密码正确： 返回状态码0，跳转dashboard主页。
+               错误：返回状态码1，留在登录界面
+  
+  用户登出：
+         前端 ：<a>标签发送一个get请求给后端
+         后端： 执行logout方法，并跳转到login界面
+ 
+ dashboard主页：
+           访问根页面，直接跳转到dashboard主页
+           用户登录验证：
+                   通过 ： 访问dashboard主页
+                   不通过：跳转到login界面
+ 
