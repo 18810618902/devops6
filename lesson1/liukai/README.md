@@ -56,7 +56,7 @@
   </pre>
   
   
-## 项目分析
+## 需求分析
   
   用户登录：
   <pre>
@@ -78,4 +78,25 @@
            用户登录验证：
                    通过 ： 访问dashboard主页
                    不通过：跳转到login界面
+ </pre>
+
+
+## 功能分析
+
+用户登录：
+<pre>
+     views   userlogin()
+     url     /accouts/login/
+ </pre>
+ 
+ 用户登出：
+ <pre>
+     views userlogout()
+     url  /accounts/logout/
+ <pre>
+ 
+ dashboard主机
+ <pre>
+     views   index()
+     url   /   &  /dashboar/
  </pre>
