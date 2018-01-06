@@ -93,9 +93,9 @@
  <pre>
      views userlogout()
      url  /accounts/logout/
- <pre>
+ </pre>
  
- dashboard主机
+ dashboard主页
  <pre>
      views   index()
      url   /   &  /dashboar/
