@@ -105,7 +105,7 @@
         success: function(data){
           console.log(data)
           if (data.status == 0){
-            location.href = '/'
+            location.href = '{{ nexturl}}'
             console.log('success')
           }else{
             console.log('fail')
