@@ -30,7 +30,8 @@ def needlogin(request):
 
 def mylogout(request):
     logout(request)
-    return HttpResponseRedirect('/logout')
+    return HttpResponseRedirect('/login')
+    #return redirect('/login')
 
 
 def test(request):
