@@ -25,6 +25,8 @@ def create_save_user(sender, **kwargs):
     if kwargs['update_fields'] == frozenset([u'last_login']):return True
     created = kwargs.get('created')
     instance = kwargs.get('instance')
+    print('created ==> {}'.format(created))
+    print('instance ==> {}'.format(instance))
     if created:
         UserProfile.objects.create(user=instance)
     else:
