@@ -33,3 +33,9 @@ class Book(BaseModel):
     @property
     def priceplus(self):
         return self.price+1
+
+    @property
+    def todict(self):
+        for attr in self._meta.fields:
+            fieldname = attr.name
+            print(fieldname, getattr(self, fieldname))
