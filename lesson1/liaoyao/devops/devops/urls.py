@@ -22,6 +22,6 @@ urlpatterns = [
     url(r'^login$',views.needlogin,name='login'),
     url(r'^test$', views.test,name='test'),
     url(r'^hello$', views.hello,name='hello'),
-    url(r'^logout$', views.logout,name='logout'),
+    url(r'^logout$', views.mylogout,name='logout'),
     url(r'^app1/', include('app1.urls',namespace='app1'))
 ]

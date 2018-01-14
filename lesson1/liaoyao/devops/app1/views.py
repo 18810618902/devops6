@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from .models import Book
+from .models import Book,Book2
 
 
 

@@ -22,10 +22,11 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=User)
 def create_save_user(sender, **kwargs):
     print('kwargs ==> {}'.format(kwargs))
+    if kwargs['update_fields'] == frozenset([u'last_login']):return True
     created = kwargs.get('created')
     instance = kwargs.get('instance')
-    if instance.is_superuser:
-        return True
+    print('created ==> {}'.format(created))
+    print('instance ==> {}'.format(instance))
     if created:
         UserProfile.objects.create(user=instance)
     else:

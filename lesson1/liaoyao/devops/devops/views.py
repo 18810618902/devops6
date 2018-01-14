@@ -9,13 +9,14 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return render(request,'index.html')
 
-
 def needlogin(request):
     print(request.POST)
     if request.method == 'GET':
         nexturl = request.GET.get('next')
-        print(nexturl)
-        return render(request, 'pages/examples/login.html',{'nexturl':nexturl})
+        if nexturl:
+            return render(request, 'pages/examples/login.html',{'nexturl':nexturl})
+        else:
+            return render(request, 'pages/examples/login.html', {'nexturl':'/'})
     if request.method == 'POST':
         name = request.POST.get('name')
         pwd = request.POST.get('pwd')
@@ -30,8 +31,7 @@ def needlogin(request):
 
 def mylogout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('login'))
-
+    return HttpResponseRedirect('/login')
 
 def test(request):
     print(request.POST)
@@ -42,7 +42,6 @@ def test(request):
         pwd = request.POST.get('pwd')
         result = {name: pwd}
         return JsonResponse(result)
-
 
 @login_required
 def hello(request):

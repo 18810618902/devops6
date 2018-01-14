@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 
-"""
-class Book(models.Model):
+
+class Book2(models.Model):
     name = models.CharField(max_length=32)
     price = models.IntegerField()
     pub_date = models.DateField()
@@ -11,7 +11,7 @@ class Book(models.Model):
 
     def __unicode__(self):
         return self.name
-"""
+
 
 
 class BaseModel(models.Model):
