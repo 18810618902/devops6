@@ -19,9 +19,10 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='index'),
-    url(r'^login$',views.needlogin,name='login'),
+    url(r'^login$',views.needlogin2.as_view(),name='login'),
     url(r'^test$', views.test,name='test'),
     url(r'^hello$', views.hello,name='hello'),
     url(r'^logout$', views.mylogout,name='logout'),
-    url(r'^app1/', include('app1.urls',namespace='app1'))
+    url(r'^app1/', include('app1.urls',namespace='app1')),
+    url(r'^hello2/(?P<pk>\d+)$', views.hello2.as_view(),name='hello2'),
 ]
