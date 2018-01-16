@@ -37,7 +37,7 @@
 	   
 		   app: dashboard
 		   
-	           函数：DashboardView       #dashboard	 
+	           类：DashboardView       #dashboard	 
 
 3.流程图
 
