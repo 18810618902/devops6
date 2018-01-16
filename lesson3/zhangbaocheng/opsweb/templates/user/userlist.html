@@ -192,7 +192,7 @@
 
 {% block js %}
 <script>
-
+//表单验证
 $(function(){
    $(".adduserForm").Validform({
            tiptype:3
@@ -239,32 +239,7 @@ $('#adduserbtn').on('click',function(){
 })
 
 
-//删除用户
 
-        $(".User_delete").click(function () {
-            var uid = $(this).attr("data")
-            $.ajax({
-                  url: "",
-                  type: "delete",
-                  data: {"uid": uid},
-                  success: function(res){
-                     if (res.code == 0) {
-                         swal("Good", "操作成功", "success");
-                      location.reload()
-                         }else{
-                          swal("操作失败", res.msg, "error")
-                         }
-                     },
-                beforeSend: function (xhr, settings) {
-                    var csrftoken = getCookie('csrftoken');
-                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                              }
-                          }
-              })
-
-
-        })
 
 
 
