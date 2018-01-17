@@ -1,0 +1,131 @@
+
+{% extends "accounts/base.html" %}
+{% block content %}
+
+<button class="btn btn-primary">添加用户</button>
+
+
+    <div style="background: white">
+{{ job }}
+
+          <!-- TABLE: LATEST ORDERS -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th>作者</th>
+                    <th>联系电话</th>
+                    <th>地址</th>
+                    <th>作品</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for author in authors %}
+                        <tr>
+                            <td> <a href='#'>{{ author.name }}</a> </td>
+                            <td> {{ author.phone }}</td>
+                            <td> {{ author.address }}</td>
+                            <td>
+                                {% for book in author.book_set.all %}
+                                    {{ book.name }} : {{ book.price }}元
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+          <!-- /.box -->
+
+    <p> AJAX </p>
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th>作者</th>
+                    <th>联系电话</th>
+                    <th>地址</th>
+                    <th>作品</th>
+                  </tr>
+                  </thead>
+                  <tbody id="test1">
+
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+        <!-- 分页 -->
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+    type = 'post'
+    url = '/accounts/authorlist/'
+    data = {}
+
+    $.ajax({
+             type: type,
+             url: url,
+             data: data,
+             dataType: "json",
+             success: function(result){
+                 console.log(result)
+                 data = result.data
+                 tablehtml = ''
+                 for(i=0;i<data.length;i++){
+                     obj = data[i]
+                     books = obj.books
+                     bookhtml = ''
+                     for(b=0;b<books.length;b++){
+                         bookhtml += books[b].name + ':' +books[b].price + '元 '
+                     }
+                     tablehtml += '<tr>' +
+                         '<td>' + obj.name  + '</td>' +
+                         '<td>' + obj.phone  + '</td>' +
+                         '<td>' + obj.address  + '</td>' +
+                         '<td>' + bookhtml + '</td>' +
+                         + '</tr>'
+                 }
+                 console.log(tablehtml)
+                 $('#test1').html(tablehtml)
+             },
+	        error: function(){
+	          //显示错误信息
+                // errorfunc()
+	        },
+	})
+</script>
+{% endblock %}
