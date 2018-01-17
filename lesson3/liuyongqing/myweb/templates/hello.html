@@ -1,0 +1,31 @@
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <p>my name is {{ username }}</p>
+    <p>pm is {{ pm }}</p>
+    <ul>
+        {% for lag in lags %}
+        <li>{{ lag }}</li>
+        {%  endfor %}
+    </ul>
+    <ul>
+        {% for d in data %}
+        <li>{{ d.name }}, {{ d.id }}</li>
+        {% endfor %}
+    </ul>
+<br>
+{#    {% url 'hello' %}#}
+</br>
+
+{#<a href={% url 'hello'  %}>hello </a>#}
+{#</br>#}
+{#<a href={% url 'plus' 30 50  %}>两个数字相加 </a>#}
+{#</br>#}
+{#<a href={% url 'plus' n1 n2  %}>两个数字相加(动态) </a>#}
+</br>
+
+{#</body>#}
