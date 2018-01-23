@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-{{ author }}
-    访问时间：{{ timenow }}
+    姓名： {{ data.name }}<br>
+    id: {{ data.id }}<br>
+    电话：{{ data.phone }}<br>
+    地址：{{ data.address }}<br>
 {% endblock %}

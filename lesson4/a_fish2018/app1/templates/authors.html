@@ -45,7 +45,7 @@
                   <tbody>
                         {% for author in res_data %}
                         <tr>
-                            <td> <a href={% url 'authordetail' author.id %}>{{ author.name }}</a> </td>
+                            <td> <a href={% url 'authorinfo' author.id %}>{{ author.name }}</a> </td>
                             <td> {{ author.phone }}</td>
                             <td> {{ author.address }}</td>
                             <td>

@@ -185,6 +185,16 @@ class authorapi(View):
 #         self.model.objects.get(pk=pk).delete()
 #         return JsonResponse({'status': 0})
 
+class authorinfo(View):
+    template_name="authordetail.html"
+    model = Author
+
+    def get(self,request,*args,**kwargs):
+        pk = kwargs.get("pk")
+        obj = self.model.objects.get(pk=pk)
+        data = model_to_dict(obj, exclude=[])
+        print data
+        return render(request,self.template_name, {'data': data})
 
 class authorlist(View):
     template_name = 'authors.html'  # 模板名

@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^authorquery/$',authorquery.as_view()),
     url(r'^users/$',users.as_view()),
     url(r'^authorlist/(?P<pk>\d+)?/?$',authorlist.as_view(),name='authordetail'),
+    url(r'^authorinfo/(?P<pk>\d+)?/?$',authorinfo.as_view(),name='authorinfo'),
     url(r'^users1/(?P<pk>\d+)',users1.as_view()),
     url(r'^hello/(?P<pm>\d+)',hello.as_view()),
     # url(r'^author/(?P<pk>\d+)?/?$',authordetail.as_view(),name='authordetail'),
