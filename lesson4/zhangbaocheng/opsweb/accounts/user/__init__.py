@@ -23,7 +23,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
-        search = self.request.GET.get("search_data", None)                #获取搜索的用户名
+        search = self.request.GET.get("search_data", None)                #获取搜索数据
         page_num = int(self.request.GET.get("page",1))                    #获取page id
 
         if search:
