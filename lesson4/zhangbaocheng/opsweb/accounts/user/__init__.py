@@ -9,8 +9,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import  permission_required, login_required
 from django.core.paginator import  Paginator, PageNotAnInteger ,EmptyPage
 from django.db.models import Q
-from  accounts.page import  JuncheePaginator
-from django.forms import model_to_dict
 
 
 
