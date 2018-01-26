@@ -1,0 +1,626 @@
+
+{% extends "base.html" %}
+
+
+
+
+
+{% block css %}
+
+<style>
+
+    .distance {margin-left:10px}
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+{% include 'modal.html' %}  <!-- include的文件要放在content区域 -->
+
+
+
+    </br>
+
+    <div class="box">
+
+            <div class="box-body col-md-5">
+
+                <button class="btn btn-primary" id='addauthorbtn'>添加用户</button>
+
+            </div>
+
+            <div class="box-body input-group margin col-md-4">
+
+                <input id="souinput" type="text" class="form-control" value="{{request.GET.search}}">
+
+                    <span class="input-group-btn">
+
+                        <a id="tiaozhuansearch" href="">
+
+                            <button id="seabtn" type="button" class="btn btn-info btn-flat">搜索</button>
+
+                        </a>
+
+                    </span>
+
+            </div>
+
+    </div>
+
+
+
+    <div style="background: white">
+
+
+
+          <!-- TABLE: LATEST ORDERS -->
+
+            <!-- /.box-header -->
+
+            <div class="box-body">
+
+              <div class="table-responsive">
+
+                <table class="table no-margin">
+
+                  <thead>
+
+                  <tr>
+
+                      <th>作者</th>
+
+                      <th>联系电话</th>
+
+                      <th>地址</th>
+
+                      <th>作品</th>
+
+                      <th>操作</th>
+
+                  </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                        {% for author in res_data %}
+
+                        <tr>
+
+                            <td> <a href={% url 'authordetail' author.id %}>{{ author.name }}</a> </td>
+
+                            <td> {{ author.phone }}</td>
+
+                            <td> {{ author.address }}</td>
+
+                            <td>
+
+                                {% for book in author.book_set.all %}
+
+                                    {{ book.name }} : {{ book.price }}元
+
+                                {% endfor %}
+
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-warning btn-xs editauthor" objid="{{author.id}}">修改</button>
+
+                                <button id="delete" class="btn btn-danger btn-xs deleteauthor distance" objid="{{author.id}}">删除</button>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+              <!-- /.table-responsive -->
+
+            </div>
+
+
+
+
+
+
+
+        <!-- 分页 -->
+
+        <div class="panel-default">
+
+            <center>
+
+                <ul class="pagination">
+
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+
+
+
+                    {% if res_data.has_previous %}
+
+                        <li><a href="?page={{ res_data.previous_page_number }}&search={{request.GET.search}}">上一页</a></li>
+
+                    {% else %}
+
+                        <li class="previous disabled"><a>上一页</a></li>
+
+                    {% endif %}
+
+
+
+                    {% for i in res_data.paginator.page_range_ext %}
+
+                        <li {% if res_data.number == i %}class="active"{% endif %}>
+
+                            <a href="{{ request.path }}?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a>
+
+                        </li>
+
+                    {% endfor %}
+
+
+
+                    {% if res_data.has_next %}
+
+                    <li><a href="{{ request.path }}?page={{ res_data.next_page_number }}&search={{ request.GET.search }}">下一页</a></li>
+
+                    {% else %}
+
+                        <li class="previous disabled"><a>下一页</a></li>
+
+                    {% endif %}
+
+                    <li><a href="{{ request.path }}?page={{ res_data.paginator.num_pages }}&search={{ request.GET.search }}">&raquo;</a></li>
+
+                </ul>
+
+            </center>
+
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+{% endblock %}
+
+
+
+{% block js %}
+
+
+
+
+
+<script>
+
+
+
+<!-- 添加 -->
+
+    $('#addauthorbtn').click(function(){
+
+        $('#addauthor').modal('show')
+
+        // get post delete put
+
+    })
+
+
+
+
+
+    $('#saveadd').click(function () {
+
+            name = $('#name').val()
+
+            phone = $('#phone').val()
+
+            address = $('#address').val()
+
+            books = $('#books').val()
+
+            books = books.split(',')
+
+
+
+            $.ajax({
+
+                type: 'post',
+
+                url: '{% url "authordetail" 1 %}',
+
+                data: {name:name,address:address,phone:phone,books:JSON.stringify(books)},
+
+                dataType: "json",
+
+                success: function (result) {
+
+                    console.log(result)
+
+                    status = result.status
+
+                    if (status == 0){
+
+                        location.reload()
+
+                    }
+
+                    else if (status == -1){
+
+                        data = result.data
+
+                        errorhtml = '<b style="color:red">不存在的书：</b>'
+
+                        for (i=0;i<data.length;i++){
+
+                            errorhtml += '<span style="margin-right: 10px">' + data[i].name + '</span>'
+
+                        }
+
+                        $('#info').html(errorhtml)
+
+                    }
+
+                },
+
+
+
+                error: function () {
+
+
+
+                },
+
+            })
+
+        })
+
+
+
+    $('.editauthor').click(function () {
+
+        id = $(this).attr('objid')
+
+
+
+        $.ajax({
+
+                type: 'get',
+
+                url: '/authorapi/' + id ,
+
+                data: {},
+
+                dataType: "json",
+
+                success: function (result) {
+
+                    console.log(result)
+
+                    books = result.books
+
+                    checkboxhtml = ''
+
+                    for (i=0;i<books.length;i++){
+
+                        bk = books[i]
+
+                        checkboxhtml += '<tr> ' +
+
+                            '<td><input checked type="checkbox" bookid=' +  bk.id  + '></td>' + '<td>' + bk.name + '</td>'
+
+                            + '</tr>'
+
+                    }
+
+                    $('#selectbooks').html(books)
+
+                    $('#selectbooks').html(checkboxhtml)
+
+                },
+
+                error: function () {
+
+                    //显示错误信息
+
+                    // errorfunc()
+
+                },
+
+            })
+
+
+
+        name = $.trim($(this).parents("tr").children("td").eq(0).text())
+
+        phone = $.trim($(this).parents("tr").children("td").eq(1).text())
+
+        address = $.trim($(this).parents("tr").children("td").eq(2).text())
+
+
+
+        $('#editname').attr('value', name)
+
+        $('#editphone').attr('value', phone)
+
+        $('#editaddress').attr('value', address)
+
+        $('#editauthor').modal('show')
+
+        $('#saveeidt').click(function () {
+
+            name = $('#editname').val()
+
+            phone = $('#editphone').val()
+
+            address = $('#editaddress').val()
+
+
+
+            var bookids = new Array();  // 存储已选择的planid
+
+            $("#selectbooks input[type=checkbox]").each(function () {  // 已选择的 checkbox
+
+                 if ($(this).is(":checked")) {  // 判断是否选择
+
+                     bookids.push($(this).attr("bookid"))  // 添加已选择的planid
+
+                 }
+
+            });
+
+            console.log(bookids)
+
+
+
+            $.ajax({
+
+                type: 'put',
+
+                <!--url: '/author/' + id + '/',-->
+
+                url: '{% url "authordetail" id %}',
+
+                data: {name: name, phone: phone, address: address, bookids:JSON.stringify(bookids), pk:id},
+
+                dataType: "json",
+
+                success: function (result) {
+
+                    console.log(result)
+
+                    status = result.status
+
+                    if (status == 0) {
+
+                        location.reload()
+
+                    }
+
+                },
+
+                error: function () {
+
+                    //显示错误信息
+
+                    // errorfunc()
+
+                },
+
+            })
+
+        })
+
+    })
+
+
+
+    // 删
+
+    $(".deleteauthor").click(function(){
+
+        uid = $(this).attr('objid')
+
+        var type = "DELETE"
+
+        var url = "{% url 'authordetail' %}" + uid
+
+        var data = {}
+
+        console.log(url)
+
+        $.ajax({
+
+            type: type,
+
+            url: url,
+
+            data: data,
+
+            dataType: "json",
+
+            success: function(result){
+
+                // 逻辑
+
+                console.log(result)
+
+                if (result.status == 0){
+
+                    alert(uid + ' 删除成功')
+
+                    window.location.reload()
+
+                }
+
+            },
+
+            error: function(){
+
+                //显示错误信息
+
+                alert('delete error!')
+
+            },
+
+        })
+
+    })
+
+
+
+    // 搜索
+
+    $("#seabtn").click(function(){
+
+        var search = $("#souinput").val()
+
+        url = "?search=" + search
+
+        $("#tiaozhuansearch").attr("href",url)
+
+    })
+
+
+
+    // 查详细信息
+
+    $(".detail").click(function(){
+
+        uid = $(this).attr('objid')
+
+        var type = "GET"
+
+        var url = "{% url 'authordetail' %}" + uid
+
+        var data = {}
+
+        $.ajax({
+
+            type: type,
+
+            url: url,
+
+            data: data,
+
+            dataType: "json",
+
+            success: function(result){
+
+                // 逻辑
+
+                alert(result.data.name)
+
+            },
+
+            error: function(){
+
+                //显示错误信息
+
+                alert('put error!')
+
+            },
+
+        })
+
+    })
+
+
+
+
+
+
+
+
+
+function getauthors() {
+
+    $.ajax({
+
+        type: 'post',
+
+        url: '/authorapi/',
+
+        data: {},
+
+        dataType: "json",
+
+        success: function (result) {
+
+            console.log(result)
+
+            data = result.data
+
+            tablehtml = ''
+
+            for (i = 0; i < data.length; i++) {
+
+                obj = data[i]
+
+                books = obj.books
+
+                bookhtml = ''
+
+                for (b = 0; b < books.length; b++) {
+
+                    bookhtml += books[b].name + ':' + books[b].price + '元 '
+
+                }
+
+                tablehtml += '<tr>' +
+
+                    '<td>' + obj.name + '</td>' +
+
+                    '<td>' + obj.phone + '</td>' +
+
+                    '<td>' + obj.address + '</td>' +
+
+                    '<td>' + bookhtml + '</td>' +
+
+                    +'</tr>'
+
+            }
+
+            console.log(tablehtml)
+
+            $('#test1').html(tablehtml)
+
+        },
+
+        error: function () {
+
+            //显示错误信息
+
+            // errorfunc()
+
+        },
+
+    })
+
+}
+
+
+
+
+
+</script>
+
+{% endblock %}
