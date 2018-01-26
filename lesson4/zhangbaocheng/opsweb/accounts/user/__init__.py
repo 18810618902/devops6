@@ -13,6 +13,7 @@ from django.db.models import Q
 
 
 
+
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/userlist.html'
     per = 10
@@ -23,7 +24,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
-        search = self.request.GET.get("search_data", None)                #获取搜索数据
+        search = self.request.GET.get("search_data", None)                #获取搜索的用户名
         page_num = int(self.request.GET.get("page",1))                    #获取page id
 
         if search:
@@ -70,32 +71,23 @@ class UserListView(LoginRequiredMixin, TemplateView):
 
 
 
-class UserAddView(LoginRequiredMixin, View):
-    def post(self, request):
-        data = (request.POST.dict())
+class ModifyUserView(LoginRequiredMixin, View):
+
+    def post(self, request, *args, **kwargs):
         ret = {"code":0}
         try:
-            User_obj = User.objects.create_user(username=data['username'],
-                                              last_name=data['last_name'],
-                                              password=data['password'],
-                                              email=data['email'],
-                                               )
+            User_obj = User.objects.create(**QueryDict(request.body).dict())
+
         except IntegrityError as e:
             ret = {"code": 1,"msg":"该用户已存在"}
         except  Exception as e:
             ret = {"code": 1, "msg": "未知错误请联系管理员"}
         return JsonResponse(ret)
 
-
-
-
-
-class ModifyUserView(LoginRequiredMixin, View):
-    def delete(self,request):
+    def delete(self, request, *args, **kwargs):
         ret = {"code": 0}
-        data_name = QueryDict(request.body)
         try:
-            idc_obj = User.objects.get(id=data_name.get("uid", "")).delete()
+            idc_obj = User.objects.get(pk=QueryDict(request.body)['id']).delete()
         except User.DoesNotExist:
             ret = {"code": 1,"errmsg":"用户不存在"}
         return JsonResponse(ret)
