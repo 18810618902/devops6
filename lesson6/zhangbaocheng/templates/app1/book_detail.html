@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block css %}
+<style>
+    h3 {color:blue}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<h3>Book Detail</h3>
+<h4>书名：{{ book.name }}</h4>
+<h4>价格：{{ book.price }}</h4>
+<h4>出版社：{{ book.publish }}</h4>
+
+
+{% endblock %}
