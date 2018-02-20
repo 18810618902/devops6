@@ -1,0 +1,377 @@
+
+{% extends "base.html" %}
+
+
+{% block css %}
+<style>
+    .distance {margin-left:10px}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'bookmodal.html' %}  <!-- include的文件要放在content区域 -->
+
+    </br>
+    <div class="box">
+            <div class="box-body col-md-5">
+                <button class="btn btn-primary" id='addbookbtn'>添加用户</button>
+            </div>
+            <div class="box-body input-group margin col-md-4">
+                <input id="souinput" type="text" class="form-control">
+                    <span class="input-group-btn">
+                         <a id="tiaozhuansearch" href="">
+                      <button id="seabtn" type="button" class="btn btn-info btn-flat">Go!</button>
+                              </a>
+                    </span>
+            </div>
+    </div>
+
+    <div style="background: white">
+
+          <!-- TABLE: LATEST ORDERS -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                      <th>书名</th>
+                      <th>介绍</th>
+                      <th>价格</th>
+                      <th>作者</th>
+                      <th>出版社</th>
+                      <th>操作</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for book in res_data %}
+                        <tr>
+                            <td> <a href={% url 'bookdetail' book.id %}>{{ book.name }}</a> </td>
+                            <td> {{ book.note }}</td>
+                            <td> {{ book.price }}</td>
+                            <td>
+                                {% for author in book.author.all %}
+                                    {{ author.name }}
+                                {% endfor %}
+                            </td>
+                        <td   value={{ book.publish_id }}>
+
+                                {{ book.publish.name }}
+
+                        </td>
+                            <td>
+                                <button class="btn btn-warning btn-xs editbook" objid="{{book.id}}">修改</button>
+                                <button class="btn btn-danger btn-xs deletebook distance" objid="{{book.id}}">删除</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+          <!-- /.box -->
+    <!--
+    <p> AJAX </p>
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th>作者</th>
+                    <th>联系电话</th>
+                    <th>地址</th>
+                    <th>作品</th>
+                  </tr>
+                  </thead>
+                  <tbody id="test1">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+  -->
+
+        <!-- 分页
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>-->
+
+    <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if res_data.has_previous %}
+                        <li><a href="?page={{ res_data.previous_page_number }}&search={{request.GET.search}}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in res_data.paginator.page_range_ext %}
+                        <li {% if res_data.number == i %}class="active"{% endif %}>
+                            <a href="{{ request.path }}?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if res_data.has_next %}
+                    <li><a href="{{ request.path }}?page={{ res_data.next_page_number }}&search={{ request.GET.search }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ res_data.paginator.num_pages }}&search={{ request.GET.search }}">&raquo;</a></li>
+                </ul>
+
+            </center>
+
+        </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+    $('#addbookbtn').click(function () {
+ $('#addbook').modal('show')
+
+    })
+
+    $('#saveadd').click(function () {
+        name=$('#name').val()
+        note=$('#note').val()
+        price=$('#price').val()
+        author=$('#author').val()
+        author = author.split(',')
+        publish=$('#publish').val()
+
+
+        $.ajax({
+            type:'post',
+            url:'/app1/booklist/1/',
+            data:{name:name,note:note,price:price,author:JSON.stringify(author),publish:publish},
+            datatype:'json',
+            success:function (result) {
+                console.log(result)
+                status=result.status
+                if (status==0){
+                    location.reload()
+                }
+                else if (status==1) {   // 显示不存在的作者
+                //alert('作者不存在')
+                data = result.data
+                    console.log(d)
+                errorbook = '<b style="color:red">不存在的作者：</b>'
+                for (i=0; i<data.length; i++){
+                    errorbook += data[i].name + ' '
+                }
+                $('#info').html(errorbook)
+                console.log(errorbook)
+
+
+                }
+                else if(status==-1){
+                    //显示不存在的出版社
+                    data=result.data
+                    console.log(data)
+                    errorpublish='<b style="color:red">不存在的出版社：</b>'
+                    for (y=0;y<data.length;y++){
+                        errorpublish += data[y].publish+''
+                    }
+                    $('#info').html(errorpublish)
+                console.log(errorpublish)
+                }
+
+
+            }
+        })
+
+
+    })
+$('.editbook').click(function () {
+    $('#editbooks').modal('show')
+     id = $(this).attr('objid')
+    console.log(id)
+
+     $.ajax({
+       type:'get',
+       url:'{% url "bookapi" %}'+ id,
+       data:{},
+       datatype:"json",
+       success:function (result) {
+           console.log(result)
+           publish=result.data.publish
+
+           author = result.data.author
+                    checkboxhtml = ''
+                    for (i=0;i<author.length;i++){
+                        bk = author[i]
+                        console.log(bk)
+                        checkboxhtml += '<tr> ' +
+                            '<td><input checked type="checkbox" authorid=' +  bk.id  + '></td>' + '<td>' + bk.name + '</td>'
+                            + '</tr>'
+                    }
+              $('#selectauthor').html(checkboxhtml)
+       },
+      error: function () {
+                    //显示错误信息
+                    // errorfunc()
+                },
+
+   })
+
+        name = $.trim($(this).parents("tr").children("td").eq(0).text())
+        note = $.trim($(this).parents("tr").children("td").eq(1).text())
+        price = $.trim($(this).parents("tr").children("td").eq(2).text())
+        publish = $.trim($(this).parents('tr').children('td').eq(4).text())
+
+        $('#editname').attr('value', name)
+        $('#editnote').attr('value', note)
+        $('#editprice').attr('value',price)
+        $('#editpublish').attr('value',publish)
+         $('#saveeidt').click(function () {
+            name = $('#editname').val()
+            note = $('#editnote').val()
+            price = $('#editprice').val()
+             publish=$('#editpublish').val()
+
+                   var authorids = new Array();  // 存储已选择的planid
+            $("#selectauthor input[type=checkbox]").each(function () {  // 已选择的 checkbox
+                 if ($(this).is(":checked")) {  // 判断是否选择
+                     authorids.push($(this).attr("authorid"))  // 添加已选择的planid
+                 }
+            });
+
+
+            $.ajax({
+                type: 'put',
+                url: '/app1/booklist/' + id + '/',
+                data: {name: name, note:note, price:price, publish:publish,authorids:JSON.stringify(authorids)},
+                dataType: "json",
+                success: function (result) {
+                    console.log(result)
+                    status = result.status
+                    if (status == 0) {
+                        location.reload()
+                    }
+                },
+                error: function () {
+                    //显示错误信息
+                    // errorfunc()
+                },
+            })
+
+})
+
+    })
+
+
+    $('.deletebook').click(function () {
+        id = $(this).attr('objid')
+        $.ajax({
+        type: 'DELETE',  //  http方法，get/post/put/delete...
+        url: '{% url "bookdetail" %}' + id ,  // 请求后端的url
+        data: {},  // 前端的数据，字典类型的，比如 {name:'test1', password:'123456'}
+        dataType: "json",  // 前端指定的数据类型
+
+              success: function(result){
+                // 逻辑
+                console.log(result)
+                if (result.status == 0){
+                    alert(id + ' 删除成功')
+                    window.location.reload()
+                }
+            },
+               error: function(){
+                //显示错误信息
+                alert('delete error!')
+            },
+
+    })
+        })
+
+
+
+  // 搜索
+
+    $("#seabtn").click(function(){
+        var search = $("#souinput").val()
+        url = "?search=" + search
+        $("#tiaozhuansearch").attr("href",url)
+    })
+
+
+        // 查详细信息
+    $(".detail").click(function(){
+        uid = $(this).attr('objid')
+        var type = "GET"
+        var url = "{% url 'bookdetail' %}" + uid
+        var data = {}
+        $.ajax({
+            type: type,
+            url: url,
+            data: data,
+            dataType: "json",
+            success: function(result){
+                // 逻辑
+                alert(result.data.name)
+            },
+            error: function(){
+                //显示错误信息
+                alert('put error!')
+            },
+        })
+    })
+
+function getauthors() {
+    $.ajax({
+        type: 'post',
+        url: '/app1/bookapi/',
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            console.log(result)
+            data = result.data
+            tablehtml = ''
+            for (i = 0; i < data.length; i++) {
+                obj = data[i]
+                books = obj.books
+                bookhtml = ''
+                for (b = 0; b < books.length; b++) {
+                    bookhtml += books[b].name + ':' + books[b].price + '元 '
+                }
+                tablehtml += '<tr>' +
+                    '<td>' + obj.name + '</td>' +
+                    '<td>' + obj.phone + '</td>' +
+                    '<td>' + obj.address + '</td>' +
+                    '<td>' + bookhtml + '</td>' +
+                    +'</tr>'
+            }
+            console.log(tablehtml)
+            $('#test1').html(tablehtml)
+        },
+        error: function () {
+            //显示错误信息
+            // errorfunc()
+        },
+    })
+}
+
+    </script>
+
+{% endblock %}
