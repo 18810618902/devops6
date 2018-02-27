@@ -1,0 +1,28 @@
+
+
+{% extends "base.html" %}
+{% block css %}
+<style>
+    h3 {color:blue}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<h3>Author Detail</h3>
+<h4>作家：{{ author.name }}</h4>
+
+<p> 他的书单：</p>
+<ul>
+    {% for book in author.book_set.all %}
+    <li> {{ book.name }}</li>
+    {% endfor %}
+</ul>
+
+<p> 当前用户：{{request.user}}</p>
+<span> 访问时间：<b> {{timenow}} </b></span>
+
+
+{% endblock %}
