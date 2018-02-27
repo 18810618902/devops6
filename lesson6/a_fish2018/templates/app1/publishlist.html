@@ -1,0 +1,193 @@
+
+{% extends "base.html" %}
+
+
+{% block css %}
+<style>
+    .distance {margin-left:10px}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'modal.html' %}  <!-- include的文件要放在content区域 -->
+
+
+    </br>
+    <div class="box">
+            <div class="box-body col-md-5">
+                <button class="btn btn-primary" id='addPublishbtn'>添加出版社</button>
+            </div>
+            <div class="box-body input-group margin col-md-4">
+                <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">Go!</button>
+                    </span>
+            </div>
+    </div>
+
+    <div style="background: white">
+
+          <!-- TABLE: LATEST ORDERS -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                      <th>出版社</th>
+                      <th>书</th>
+                      <th>描述</th>
+                      <th>所属城市</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for publish in publishs %}
+                        <tr>
+                            <input type="hidden" id='updateid' name="id" objid="{{publish.id}}"> <!--update need id-->
+                            <td> <a href="{% url 'publishdetail'  publish.id %}">{{ publish.name }}</a> </td>
+                            <td>
+                                {% for publishobj in publish.book_set.all %}
+                                 <  {{ publishobj.name }}>
+                                {% endfor %}
+                            </td>
+                            <td> {{ publish.note }}</td>
+                            <td> {{ publish.city }}</td>
+
+
+                            <td>
+                                <button class="btn btn-warning btn-xs editpublish" objid="{{publish.id}}">修改</button>
+                                <button class="btn btn-danger btn-xs deletepublish distance" objid="{{publish.id}}">删除</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+          <!-- /.box -->
+
+
+
+  <!-- 分页 -->
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+//出版社模态框
+    $('#addPublishbtn').on('click', function () {
+            $('#addpublishs').modal('show')
+
+
+    })
+
+//保存出版社信息
+    $('#savepublishbtn').on('click', function () {
+            name =  $('#addpublishname').val()
+            note =  $('#addpublishnote').val()
+            city = $('#addpublishcity').val()
+            var  data = {name:name,note:note, city:city}
+            console.log(data)
+
+            $.ajax({
+            url: '{% url "publishdetail" %}',
+            type: "post",
+            data:  {name:name,note:note, city:city},
+            success: function(res){
+                if (res.code == 0) {
+                    location.reload()
+                }else{
+                    console.log(res)
+                }
+            },
+
+        })
+
+    })
+
+//修改出版社数据渲染模态框
+    $('.editpublish').on('click', function () {
+            $('#updatepublishs').modal('show')
+            id = $(this).attr('objid')
+            console.log(id)
+            name = $.trim($(this).parents('tr').children('td').eq(0).text())
+            note = $.trim($(this).parents('tr').children('td').eq(2).text())
+            city = $.trim($(this).parents('tr').children('td').eq(3).text())
+            $('#updateppublishname').attr('value',name)
+            $('#updateppublishnote').attr('value',note)
+            $('#updateppublishcity').attr('value',city)
+
+    })
+
+//修改保存出版社数据
+$('#updatepsavepublishbtn').on('click',function () {
+        name =  $('#updateppublishname').val()
+        note =  $('#updateppublishnote').val()
+        city = $('#updateppublishcity').val()
+        $.ajax({
+            url: '{% url "publishdetail" %}' + id,
+            type: "put",
+            data: {name:name,note:note,city:city},
+            success: function(res){
+                if (res.code == 0) {
+                    location.reload()
+                }else{
+                    console.log(res)
+                }
+            },
+
+        })
+
+})
+
+//删除出版社
+
+//删除书籍
+
+
+        $(".deletepublish").click(function () {
+            var id = $(this).attr("objid")
+            $.ajax({
+                  url: "{% url "publishdetail" %} ",
+                  type: "delete",
+                  data: {"id": id},
+                  success: function(res){
+                     if (res.code == 0) {
+                      location.reload()
+                         }else{
+                         console.log(res)
+                         }
+                     },
+
+              })
+
+
+
+        })
+</script>
+
+
+{% endblock %}
