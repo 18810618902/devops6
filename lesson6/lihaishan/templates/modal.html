@@ -1,0 +1,171 @@
+
+
+<style>
+    .modalbtn {margin-right:25%}
+</style>
+
+
+<div class="modal fade" id='infomodal'>
+  <div class="modal-dialog" style="width:40%">
+    <div class="modal-content">
+    	<div class="modal-header" style="background:#0080FF; color:white">
+			<i class="fa fa-info-circle"></i>
+            <span id="prompttitle" style="font-weight:bold">服务器提示</span>
+	  		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+      <div id="inforz" class="text" style="overflow-y:scroll; text-align:center; max-height:400px; max-width:800px; margin-top:10px; margin-bottom:10px">
+
+      </div>
+    <div class="modal-footer" style="display: table; width: auto;margin-left: auto; margin-right: auto;">
+        <button id='infoclose' type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id='deleteModal'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+    	<div class="modal-header" style="background:#FF5151; color:white">
+			<i class="fa fa-info-circle"></i>
+            <span style="font-weight:bold">删除</span>
+	  		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+      <div id="deleteModalbody" class="modal-body" style="text-align:center">
+        <p>确认删除选择的数据吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn cancelbtn" data-dismiss="modal">取消</button>
+        <button type="button" id='savedeletebtn' class="btn btn-primary surebtn">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id='addauthor'>
+  <div class="modal-dialog" style="width:40%">
+    <div class="modal-content">
+
+        <div class="modal-header" style="background:cornflowerblue; color:white">
+			<i class="fa fa-info-circle"></i>
+            <span style="font-weight:bold">添加</span>
+	  		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+
+        <div class="modal-body" style="text-align:center">
+           <form class="form-horizontal" onsubmit="return false;">
+	      <!-- 添加 -->
+              <div class="box-body">
+
+                  <div class="form-group">
+                      <label for="name" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>作者</label>
+                      <div class="col-sm-8">
+                          <input id="name" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="phone" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>手机号</label>
+                      <div class="col-sm-8">
+                          <input id="phone" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="address" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>住址</label>
+                      <div class="col-sm-8">
+                          <input id="address" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="books" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>书单</label>
+                      <div class="col-sm-8">
+                          <input id="books" type="text" class="form-control" placeholder="多本书以空格分隔"/>
+                      </div>
+                  </div>
+
+
+                  <div id="info">
+
+                  </div>
+              </div>
+           </form>
+        </div>
+
+        <div class="modal-footer">
+            <button id='infoclose' class="btn btn-default modalbtn" data-dismiss="modal">关闭</button>
+            <button id='saveadd' class="btn btn-primary modalbtn">确定</button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id='editauthor'>
+  <div class="modal-dialog" style="width:40%">
+    <div class="modal-content">
+
+        <div class="modal-header" style="background:cornflowerblue; color:white">
+			<i class="fa fa-info-circle"></i>
+            <span style="font-weight:bold">修改</span>
+	  		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+
+        <div class="modal-body" style="text-align:center">
+           <form class="form-horizontal" onsubmit="return false;">
+	      <!-- 添加 -->
+              <div class="box-body">
+
+                  <div class="form-group">
+                      <label for="editname" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>作者</label>
+                      <div class="col-sm-8">
+                          <input id="editname" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="editphone" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>手机号</label>
+                      <div class="col-sm-8">
+                          <input id="editphone" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="name" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>住址</label>
+                      <div class="col-sm-8">
+                          <input id="editaddress" type="text" class="form-control" placeholder=""/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="name" class="col-sm-3 control-label"><span style="color:red; margin-right:10px">*</span>书单</label>
+                      <div class="col-sm-8">
+                               <table class="table table-bordered" id="myTable">
+                                     <thead>
+                                         <th style="width:20px;"></th>
+                                         <th>书名</th>
+                                     </thead>
+                                     <tbody id="selectbooks">
+
+                                     </tbody>
+                                 </table>
+
+                      </div>
+                  </div>
+
+
+              </div>
+           </form>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default modalbtn" data-dismiss="modal">关闭</button>
+            <button id='saveeidt' class="btn btn-primary modalbtn">确定</button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+

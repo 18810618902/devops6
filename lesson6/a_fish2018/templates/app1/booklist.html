@@ -1,0 +1,235 @@
+
+{% extends "base.html" %}
+
+
+{% block css %}
+<style>
+    .distance {margin-left:10px}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'modal.html' %}  <!-- include的文件要放在content区域 -->
+
+    </br>
+    <div class="box">
+            <div class="box-body col-md-5">
+                <button class="btn btn-primary" id='addbookbtn'>添加书籍</button>
+            </div>
+            <div class="box-body input-group margin col-md-4">
+                <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">Go!</button>
+                    </span>
+            </div>
+    </div>
+
+    <div style="background: white">
+
+          <!-- TABLE: LATEST ORDERS -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                      <th>书名</th>
+                      <th>价格</th>
+                      <th>出版社</th>
+                      <th>操作</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <input type="hidden" id='updateid' name="id" objid="{{book.id}}"> <!--update need id-->
+                            <td> <a href="{% url 'bookdetail'  book.id %}">{{ book.name }}</a> </td>
+                            <td> {{ book.price }}</td>
+                            <td value={{ book.publish.id }}> {{ book.publish.name }}</td>
+
+                            <td>
+                                <button class="btn btn-warning btn-xs editbook" objid="{{book.id}}">修改</button>
+                                <button class="btn btn-danger btn-xs deletebook distance" objid="{{book.id}}">删除</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+          <!-- /.box -->
+
+
+
+        <!-- 分页 -->
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+
+//添加书籍模态框
+$("#addbookbtn").on('click',function () {
+    $('#addbook').modal('show')
+
+        $.ajax({
+        type: 'get',
+        url: '{% url 'bookapi' %}',
+        data: {},
+        dataType: "json",
+            success: function(res){
+                console.log(res)
+                if (res.code == 0) {
+					/* 出版社 下拉列表填充*/
+						var selectdom= $("#addpublish");
+						selectdata = (res.data);
+						selectdom.empty()
+						for (var i=0;i<selectdata.length;i++)
+						{
+							selectdom.append("<option value="  + selectdata[i]['id'] + ">"  + selectdata[i]['name'] +  "</option>");
+						}
+                     //location.reload()
+                 }else{
+                     console.log(res)
+                      }
+                 },
+
+    })
+
+
+})
+
+
+//提交书籍信息
+$(".savebookbtn").on('click', function () {
+    name =  $('#addbookname').val()
+    price =  $('#addbookprice').val()
+    publish = $('#addpublish').val()
+    data = {name:name,price:price,publish:publish}
+    console.log(data)
+        $.ajax({
+            url: "{% url "bookdetail" %} ",
+            type: "post",
+            data: {name:name,price:price,publish:publish},
+            success: function(res){
+                if (res.code == 0) {
+                    location.reload()
+                }else{
+                    console.log(res)
+                }
+            },
+
+        })
+
+})
+
+
+//修改图书信息
+$(".editbook").on('click',function () {
+    $('#updatebook').modal('show')
+            id = $(this).attr('objid')
+            name = $.trim($(this).parents('tr').children('td').eq(0).text())
+            price = $.trim($(this).parents('tr').children('td').eq(1).text())
+            publishs = $.trim($(this).parents('tr').children('td').eq(2).text())
+            $('#updatebookname').attr('value',name)
+            $('#updatebookprice').attr('value',price)
+            $.ajax({
+            url: "{% url "bookapi" %} ",
+            type: "get",
+            success: function(res){
+                if (res.code == 0) {
+                    var selectdom= $("#updatepublish");
+                    selectdata = (res.data);
+                    selectdom.empty()
+						for (var i=0;i<selectdata.length;i++)
+						{
+							if (selectdata[i]['name'] == publishs){
+                                selectdom.append("<option value='"  + selectdata[i]['id'] + "' selected>"  + selectdata[i]['name'] +  "</option>");
+                            }
+                            else{
+							    selectdom.append("<option value="  + selectdata[i]['id'] + ">"  + selectdata[i]['name'] +  "</option>");
+                            }
+						}
+                }else{
+                    console.log(res)
+                }
+            },
+
+        })
+})
+
+//提交修改过的数据
+
+$('.updatebookbtn').on('click', function () {
+        name =  $('#updatebookname').val()
+        price =  $('#updatebookprice').val()
+        publish = $('#updatepublish').val()
+        $.ajax({
+            url: '{% url "bookdetail" %}' + id,
+            type: "put",
+            data: {name:name,price:price,publish:publish},
+            success: function(res){
+                if (res.code == 0) {
+                    location.reload()
+                }else{
+                    console.log(res)
+                }
+            },
+
+        })
+
+
+
+})
+
+
+//删除书籍
+
+
+        $(".deletebook").click(function () {
+            var id = $(this).attr("objid")
+            console.log(id)
+            $.ajax({
+                  url: "{% url "bookdetail" %} ",
+                  type: "delete",
+                  data: {"id": id},
+                  success: function(res){
+                     if (res.code == 0) {
+                      location.reload()
+                         }else{
+                         console.log(res)
+                         }
+                     },
+
+              })
+
+
+
+        })
+</script>
+{% endblock %}

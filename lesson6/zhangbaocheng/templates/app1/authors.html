@@ -1,0 +1,240 @@
+
+{% extends "base.html" %}
+
+
+{% block css %}
+<style>
+    .distance {margin-left:10px}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'modal.html' %}  <!-- include的文件要放在content区域 -->
+
+    </br>
+    <div class="box">
+            <div class="box-body col-md-5">
+                <button class="btn btn-primary" id='addauthorbtn'>添加作者</button>
+            </div>
+            <div class="box-body input-group margin col-md-4">
+                <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">Go!</button>
+                    </span>
+            </div>
+    </div>
+
+    <div style="background: white">
+
+          <!-- TABLE: LATEST ORDERS -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                      <th>作者</th>
+                      <th>联系电话</th>
+                      <th>地址</th>
+                      <th>作品</th>
+                      <th>操作</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for author in authors %}
+                        <tr>
+                            <td> <a href='{% url "authordetail" author.id %}'>{{ author.name }}</a> </td>
+                            <td> {{ author.phone }}</td>
+                            <td> {{ author.address }}</td>
+                            <td>
+                                {% for book in author.book_set.all %}
+                                    {{ book.name }} : {{ book.price }}元
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-xs editauthor" objid="{{author.id}}">修改</button>
+                                <button class="btn btn-danger btn-xs deleteauthor distance" objid="{{author.id}}">删除</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+
+          <!-- /.box -->
+
+
+        <!-- 分页 -->
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{{ request.path }}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+// 添加作者模态框
+$("#addauthorbtn").on('click',function(){
+    $('#addauthor').modal('show')
+})
+
+//提交作者信息
+$('#saveadd').click(function () {
+    name = $('#name').val()
+    phone = $('#phone').val()
+    address = $('#address').val()
+    books = $('#books').val()
+    books = books.split(' ')
+    bks = []
+    for( i=0;i<books.length; i++){
+        book  = books[i]
+        if (book !=''){
+            bks.push(book)
+        }
+    }
+    data = {'name':name,'phone':phone,'address':address,'books':JSON.stringify(bks)},
+
+    console.log(data)
+    $.ajax({
+        type: 'post',  //  http方法，get/post/put/delete...
+        url: '{% url "authordetail" %}',  // 请求后端的url
+        data: {name:name, phone:phone, address:address, books:JSON.stringify(bks)},  // 前端的数据，字典类型的，比如 {name:'test1', password:'123456'}
+        dataType: "json",  // 前端指定的数据类型
+        // async: false,  // true是异步，false是同步，不写的话默认异步方式，
+        success: function (result) {
+            code = result.code
+            if (status == 1){   // 显示不存在的书
+                //alert('书不存在')
+                data = result.data
+                errorbook = ''
+                for (i=0; i<data.length; i++){
+                    errorbook += '不存在的书:    ' + data[i].name + ' '
+                }
+                $('#info').html(errorbook)
+                console.log(errorbook)
+
+            } else if (status == 0){
+                location.reload()  // 刷新页面
+            }
+
+        },
+        error: function () {
+
+        },
+    })
+
+})
+
+
+
+//修改作者信息渲染作者信息
+$(".editauthor").on('click',function () {
+    $('#editauthor').modal('show')
+    id = $(this).attr('objid')
+    $.ajax({
+        type: 'get',
+        url: '{% url 'authorapi' %}' + id,
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            console.log(result)
+            books = result.data.books
+            checkboxhtml = ''
+            for (i = 0; i < books.length; i++) {
+                checkboxhtml += '<tr>' + '<td><input checked type="checkbox" bookid=' + books[i].id + '>' + '</td>' + '<td>' + books[i].name + '</td>' + '</tr>'
+
+            }
+
+            $('#selectbooks').html(checkboxhtml)
+
+        }
+
+    }),
+            name = $.trim($(this).parents('tr').children('td').eq(0).text())
+            phone = $.trim($(this).parents('tr').children('td').eq(1).text())
+            address = $.trim($(this).parents('tr').children('td').eq(2).text())
+            $('#editname').attr('value',name)
+            $('#editphone').attr('value',phone)
+            $('#editaddress').attr('value',address)
+})
+
+//保存修改信息
+$('#saveeidt').click(function () {
+        name = $('#editname').val()
+        phone = $('#editphone').val()
+        address = $('#editaddress').val()
+        bookids = []
+        $('#selectbooks input[type=checkbox]').each(function () {
+            if ($(this).is(':checked')) {
+                bookids.push($(this).attr('bookid'))
+            }
+        })
+        console.log(bookids)
+        $.ajax({
+            type: 'put',  //  http方法，get/post/put/delete...
+            url: '{% url "authordetail" %}' + id,  // 请求后端的url
+            data: {name:name, phone:phone, address:address, bookids:JSON.stringify(bookids)},  // 前端的数据，字典类型的，比如 {name:'test1', password:'123456'}
+            dataType: "json",  // 前端指定的数据类型
+            // async: false,  // true是异步，false是同步，不写的话默认异步方式，
+            success: function (result) {
+                console.log(result)
+                status = result.code
+                if (code == 0){
+                    location.reload()
+                }
+
+            },
+            error: function () {
+
+            },
+        })
+})
+
+
+//删除作者
+
+        $(".deleteauthor").click(function () {
+            var id = $(this).attr("objid")
+            $.ajax({
+                  url: "{% url "authordetail" %} ",
+                  type: "delete",
+                  data: {"id": id},
+                  success: function(res){
+                     if (res.code == 0) {
+                      location.reload()
+                         }else{
+                         console.log(res)
+                         }
+                     },
+
+              })
+
+
+
+        })
+
+
+</script>
+{% endblock %}

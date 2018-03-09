@@ -1,0 +1,17 @@
+
+hello world!!!!
+
+<p>{{ username }}</p>
+<p>pm: {{ pm }}</p>
+
+<ul>
+    {% for i in lans %}
+        <li>{{ i }}</li>
+    {% endfor %}
+</ul>
+
+
+{% for u in users %}
+<li>用户名，ID</li>
+<li>{{ u.name }},{{ u.id }}</li>
+{% endfor %}
