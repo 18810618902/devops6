@@ -155,7 +155,18 @@ class autoselect(View):
         env = webdata.get('env')
         dbs = [obj.name for obj in dbconf.objects.filter(env=env)]
         use = [obj.first_name for obj in User.objects.filter(last_name=env)]
-        useobj = self.request.user
-        # if useobj.first_name in use:
-        #     use.remove(useobj.first_name)
         return JsonResponse({'status':0,'data':dbs,'usename':use})
+
+
+class inc_show(TemplateView):
+    template_name = "sqlmng/inc_show.html"
+    def get_context_data(self, **kwargs):
+        context = super(inc_show, self).get_context_data(**kwargs)
+        inc_test = inception.inc_show('inc_test')
+        inc_test2 = inception.inc_show('inc_test2')
+        context['aaa'] = "哈哈哈"
+        context['inc_test'] = inc_test
+
+        context['inc_test2'] = inc_test2
+        print inc_test2
+        return context

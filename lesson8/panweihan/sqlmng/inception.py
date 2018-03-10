@@ -2,6 +2,8 @@
 
 import MySQLdb
 
+from django.http import JsonResponse
+
 # 待审核/执行的sql语句（需包含目标数据库的地址、端口 等参数）
 def table_structure(operate,mysql_structure,dbqs):
     sql='/* --user=%s;--password=%s;--host=%s;--port=%s;--enable-%s; */\
@@ -18,7 +20,7 @@ def table_structure(operate,mysql_structure,dbqs):
          print "Mysql Error %d: %s" % (e.args[0], e.args[1])
     return result
 
-# 获取备份语句
+# 获取回滚语句
 def rollbackdb(backname,backid):
     try:
         conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='123456', db = backname, port=3306,use_unicode=True, charset="utf8")
@@ -35,3 +37,15 @@ def rollbackdb(backname,backid):
          print "Mysql Error %d: %s" % (e.args[0], e.args[1])
     return res
 
+def inc_show(sqlname):
+    try:
+        conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='123456', db = sqlname, port=3306,use_unicode=True, charset="utf8")
+        cur = conn.cursor()
+        sql = 'select * from mytable1;'
+        cur.execute(sql)
+        ret = cur.fetchall()
+        cur.close()
+        conn.close()
+    except MySQLdb.Error,e:
+         print "Mysql Error %d: %s" % (e.args[0], e.args[1])
+    return ret
