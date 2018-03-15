@@ -130,7 +130,7 @@ class autoselect(LoginRequiredMixin,View):
         qs = dbconf.objects.filter(env=env)
         dbs = [obj.name for obj in qs]
 
-        #如果超级管理员账号,执行人返回自己
+        #如果超级管理员账号,返回所有人提交数据
         userobj = request.user
         if userobj.is_superuser:
             mngs =[userobj.username]
@@ -269,19 +269,20 @@ class  inception_result(LoginRequiredMixin, ListView):
             except  Basemodel as  e:
                 print(e)
                 ret['status'] = 3
-
+        #暂停
         elif actiontype == 'pause':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('pause')
             sqlobj = self.model.objects.get(pk=pk)
             sqlobj.status = -2
-
+			
+        #取消暂停
         elif actiontype == 'cancelpause':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('pause')
             sqlobj = self.model.objects.get(pk=pk)
             sqlobj.status = -1
-
+        #放弃
         elif actiontype == 'reject':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('reject')
