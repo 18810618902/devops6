@@ -21,21 +21,21 @@ class inception_commit(LoginRequiredMixin,TemplateView):
     template_name = 'sqlmng/inception_commit.html'
     def post(self, request, **kwargs):
         webdata = QueryDict(request.body).dict()
-        print(webdata)
         username = request.user.get_username()
         #inc11321eption.table_structure(webdata['sqlcontent'])
         #dbname, env, sqlcontent, note
         #通过前端的数据，拼接目标地址
         obj  = self.model.objects.get(Q(name=webdata.get('dbname')) & Q(env=webdata.get('env')))
-        dbaddr = '--user=%s; --password=%s; --host=%s; --port=%s' % (obj.user, saltpwd.decrypt(obj.password), obj.host, obj.port)
+        dbaddr = '--user=%s; --password=%s; --host=%s; --port=%s; --enable-check;;' % (obj.user, saltpwd.decrypt(obj.password), obj.host, obj.port)
+        print(dbaddr,obj.name,webdata['sqlcontent'])
         sql_review = inception.table_structure(dbaddr, obj.name, webdata['sqlcontent'])
+        print(sql_review)
         for perrz in sql_review:
             if perrz[4] != 'None':
                 print(perrz[4])
                 return JsonResponse({'status':-2, 'msg':perrz[4]})
 
         #保存正常的SQL
-        print(sql_review)
         userobj = User.objects.get(username=request.user)
         webdata['commiter'] = username
         sqlobj = InceptSql.objects.create(**webdata)
@@ -130,7 +130,7 @@ class autoselect(LoginRequiredMixin,View):
         qs = dbconf.objects.filter(env=env)
         dbs = [obj.name for obj in qs]
 
-        #如果超级管理员账号,返回所有人提交数据
+        #如果超级管理员账号,执行人返回自己
         userobj = request.user
         if userobj.is_superuser:
             mngs =[userobj.username]
@@ -269,20 +269,19 @@ class  inception_result(LoginRequiredMixin, ListView):
             except  Basemodel as  e:
                 print(e)
                 ret['status'] = 3
-        #暂停
+
         elif actiontype == 'pause':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('pause')
             sqlobj = self.model.objects.get(pk=pk)
             sqlobj.status = -2
-			
-        #取消暂停
+
         elif actiontype == 'cancelpause':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('pause')
             sqlobj = self.model.objects.get(pk=pk)
             sqlobj.status = -1
-        #放弃
+
         elif actiontype == 'reject':
             pk = kwargs.get('pk')
             actiontype = kwargs.get('reject')
