@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include "sqlmng/modal.html" %}
+    <div class="breadcrumbs" id="breadcrumbs">
+
+    <ul class="breadcrumb">
+        <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">Home</a>
+        </li>
+
+        <li>
+        <a href="#">运维工具</a>
+        </li>
+
+        <li>
+        <a href="#">SQL上线审核系统</a>
+        </li>
+
+        <li class="active">SQL上线列表</li>
+    </ul><!-- .breadcrumb -->
+{{ role }}
+    </div>
+    <div class="page-content col-md-12">
+        <div class="dataTables_scrollBod col-md-12">
+            <table id="hosttable" class="table table-striped table-bordered dataTable no-footer table-hover table-condensed">
+                {% if res_data %}
+                    <thead>
+                    <tr>
+                        <th style="vertical-align:middle;">ID</th>
+                        <th style="vertical-align:middle;">提交时间</th>
+                        <th style="vertical-align:middle;">提交人</th>
+                        <th style="vertical-align:middle;">环境</th>
+                        <th style="vertical-align:middle;">数据库</th>
+                        <th style="vertical-align:middle;">SQL语句</th>
+                        <th style="vertical-align:middle;">执行人</th>
+                        <th style="vertical-align:middle;">状态</th>
+                        <th style="vertical-align:middle;">备注</th>
+                        <th style="vertical-align:middle;">操作</th>
+                    </tr>
+                    </thead>
+                    {% for sqlobj in res_data %}
+                        <tr class="ckitem">
+                            <td style="vertical-align:middle;">{{sqlobj.id}}</td>
+                            <td style="vertical-align:middle;">{{sqlobj.createtime|date:"Y-m-d H:i:s"}}</td>
+                            <td style="vertical-align:middle;">{{sqlobj.commiter}}</td>
+                            {% if sqlobj.env == '1' %}
+                                <td style="vertical-align:middle;"> <small class="label bg-blue">生产</small></td>
+                            {% elif sqlobj.env == '2' %}
+                                <td style="vertical-align:middle;"><small class="label bg-green">测试</small></td>
+                            {% endif %}
+                            <td style="vertical-align:middle;">{{sqlobj.dbname}}</td>
+                            <td style="vertical-align:middle;">{{sqlobj.sqlcontent|truncatechars:20}}<button type="button" class="btn btn-info btn-xs details" ckid={{sqlobj.id}} style="margin-right:30px;float:right;">详情</button></td>
+                            <td style="vertical-align:middle;">{{sqlobj.treater}}</td>
+                            <td id = 'status'>
+                            {% if sqlobj.condtion == -3 %}
+                                <span class="label bg-aqua-active"><span class="glyphicon glyphicon-refresh"></span></span>已回滚
+                            {% elif sqlobj.condtion == -2 %}
+                                <span class="label bg-aqua-active"><span class="glyphicon glyphicon-pause"></span></span>已暂停
+                            {% elif sqlobj.condtion == -1 %}
+                                <span class="label bg-light-blue-active"><span class="glyphicon glyphicon-arrow-right"></span></span>待执行
+                            {% elif sqlobj.condtion == 0 %}
+                                <span class="label bg-green-gradient"><span class="glyphicon glyphicon-ok"></span></span>已执行
+                            {% elif sqlobj.condtion == 1 %}
+                                <span class="label bg-yellow-active"><span class="glyphicon glyphicon-trash"></span></span>已放弃
+                            {% elif sqlobj.condtion == 2 %}
+                                <span class="label bg-aqua-active"><span class="glyphicon glyphicon-remove"></span></span>执行失败
+                            {% endif %}
+                            </td>
+                            <td>
+                                {{sqlobj.note|truncatechars:4}}<button type="button" class="btn btn-info btn-xs sqlnote" ckid={{sqlobj.id}} style="float:right;">详情</button>
+                                {% if sqlobj.daiwork %}
+                                    <div class="dropdown" style="float:right;">
+                                        <button class="btn btn-danger  btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        代<span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li><a href="#">{{ sqlobj.daiwork }}</a></li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </td>
+                             <!-- 测试环境 -->
+                            {% if sqlobj.env == '2' %}
+                                {% if sqlobj.condtion == -1 %}
+                                    <td style="vertical-align:middle;">
+                                    <div class="btn-group" style="margin-left:3%">
+                                                <button type="button" class="btn btn-primary btn-xs agree" ckid={{sqlobj.id}}>执行</button>
+                                                <button type="button" class="btn btn-default btn-xs dropdown-toggle sqlaction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <a href="#" class="sqlaction" actiontype="reject" style="margin-left:15%; font-weight:bolder" ckid="{{sql.id}}">
+                                                        <button class="btn btn-danger btn-xs disagree" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-remove"></span>拒绝</button>
+                                                    </a>
+{#                                                    <li><a href="#"><span class="glyphicon glyphicon-remove" style="colo">拒绝</span></a></li>#}
+                                                </ul>
+                                            </div>
+                                        <button class="btn btn-danger btn-xs disagree" style="float:right;" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-pause"></span>暂停</button>
+                                    </td>
+                                {%elif sqlobj.condtion == 0%}
+                                    <td>
+                                        <button class="btn btn-warning btn-xs rollback" style="margin-left:3%" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-repeat"></span>回滚</button>
+                                        <button class="btn btn-danger btn-xs disagree" style="float:right;" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-pause"></span>暂停</button>
+                                    </td>
+                                {%elif sqlobj.condtion == -2%}
+                                    <td>
+                                    <button class="btn btn-danger btn-xs disagree" style="margin-left:3%" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-play"></span>取消暂停</button>
+                                    </td>
+                                {% endif %}
+                            <!-- 生产环境 -->
+                            {% else %}
+                                <!-- 待执行 -->
+                                {% if sqlobj.condtion == -1 %}
+                                    {% if request.user.userprofile.role == '2' or request.user.userprofile.role == '1' or  request.user.is_superuser %}
+                                        <td>
+                                            <div class="btn-group" style="margin-left:3%">
+                                                <button type="button" class="btn btn-primary btn-xs agree" ckid={{sqlobj.id}}>执行</button>
+                                                <button type="button" class="btn btn-default btn-xs dropdown-toggle sqlaction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <a href="#" class="sqlaction" actiontype="reject" style="margin-left:15%; font-weight:bolder" ckid="{{sql.id}}">
+                                                        <button class="btn btn-danger btn-xs disagree" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-remove"></span>拒绝</button>
+                                                    </a>
+{#                                                    <li><a href="#"><span class="glyphicon glyphicon-remove" style="colo">拒绝</span></a></li>#}
+                                                </ul>
+                                            </div>
+                                            {% if request.user.userprofile.role == '1' or request.user.is_superuser%}
+                                                <button class="btn btn-danger btn-xs pause" style="float:right;" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-pause"></span>暂停</button>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                <!-- 已执行 -->
+                                {%elif sqlobj.condtion == 0%}
+                                    {% if request.user.userprofile.role == '2' or request.user.userprofile.role == '1' or  request.user.is_superuser %}
+                                        <td >
+                                        <button class="btn btn-success btn-xs rollback" style="margin-left:3%" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-repeat"></span>回滚</button>
+                                        {% if userprofile.role == '1' or request.user.is_superuser%}
+                                            <button class="btn btn-danger btn-xs pause" style="float:right;" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-pause"></span>暂停</button>
+                                        {% endif %}
+                                        </td>
+                                    {% endif %}
+                                <!-- 已暂停 -->
+                                {%elif sqlobj.condtion == -2 %}
+                                    <td>
+                                    {% if request.user.userprofile.role == '1' or request.user.is_superuser %}
+                                        <button class="btn btn-info btn-xs " style="margin-left:3%" ckid={{sqlobj.id}}><span class="glyphicon glyphicon-play"></span>取消暂停</button>
+                                    {% endif %}
+                                    </td>
+                            {% endif %}
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                    <li><a href="{% url 'inception_list' %}?page=1">&laquo;</a></li>
+                    {% if page_obj.has_previous %}
+                    <li><a href="{% url 'inception_list' %}?page={{ page_obj.previous_page_number }}&souword={{ request.GET.souword }}">上一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>上一页</a></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{% url 'inception_list' %}?page={{ i }}&souword={{ request.GET.souword }}">{{ i }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li><a href="{% url 'inception_list' %}?page={{ page_obj.next_page_number }}&souword={{ request.GET.souword }}">下一页</a></li>
+                    {% else %}
+                        <li class="previous disabled"><a>下一页</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'inception_list' %}?page={{ page_obj.paginator.num_pages }}&souword={{ request.GET.souword }}">&raquo;</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+    <!-- <script src="/static/js/cmdbvp.js"></script> -->
+
+<script>
+//执行按钮
+    $('.agree').click(function (){
+        var id = $(this).attr('ckid')
+        $('#action').modal({show:true, backdrop:'static'})
+            $('#actioncontent').html('<span style="font-weight:bold; margin-right:10px">执行此SQL语句到数据库？</span>')
+            $('#actionsave').unbind('click').bind('click', function() {
+                $('#action').modal('hide')
+                $.ajax({
+                type: "post",
+                url: '{% url "inception_list" %}' + id,
+                data: {todo:'agree',treater:treater},
+                dataType: "json",
+                success: function(result){
+                var data = result.errormessage
+                    if (result.status == 0) {
+                        var execute_time = result.execute_time
+                        var affected_rows = result.affected_rows
+                        $('#prompttitle').text('执行成功')
+                        $('#infomodal').modal({show: true, backdrop: 'static'})  // 弹起"提示"模态框
+                        $('#inforz').html('<span style="font-weight:bold; margin-right:10px">语句耗时：' + execute_time + '秒<br>影响行数：' + affected_rows + '行</span>')
+                        $('#infoclose').click(function () {  // 点击关闭按钮，刷新当前页
+                            location.reload()
+                        })
+                    }
+                    else if (result.status == -1){
+                    var h = 1
+                    var html_error = ""
+                    html_error += '<div class="row" style="font-weight:bold;text-align:center">'
+                    html_error += '<div class="col-md-2">序号</div>'
+                    html_error += '<div class="col-md-5">错误语句</div>'
+                    html_error += '<div class="col-md-5">错误信息</div>'
+                    html_error += '</div>'
+                    $.each(data,function (i,item) {
+                        html_error += '<div class="row">'
+                        html_error += '<div class="col-md-2" style="text-align:center">' + h++ + '</div>'
+                        html_error += '<div class="col-md-5" style="text-align:left;">' + item[0] + '</div>'
+                        html_error += '<div class="col-md-5" style="text-align:left">' + item[1] + '</div>'
+                        html_error += '</div>'
+                    })
+
+                    $('#errormsg').modal({show:true, backdrop:'static'})  // 弹起"提示"模态框
+                    $('#error_rz').append(html_error)
+                    $('#errorclose').click(function(){  // 点击关闭按钮，清空模态框
+                        $('#error_rz').empty()
+                        location.reload()
+                        })
+                }
+                },
+                error: function(){
+                    console.log('404..')
+                },
+            })
+                })
+
+ })
+//拒绝按钮
+    $('.disagree').click(function (){
+        var id = $(this).attr('ckid')
+        $('#action').modal({show:true, backdrop:'static'})
+            $('#actioncontent').html('<span style="font-weight:bold; margin-right:10px">是否拒绝？</span>')
+            $('#actionsave').unbind('click').bind('click', function(){
+                $('#action').modal('hide')
+                $.ajax({
+                type: "delete",
+                url: '{% url "inception_list" %}' + id,
+                data: {},
+                dataType: "json",
+                success: function(result){
+                    if (result.status == 0){
+                        $('#prompttitle').text('服务器提示')
+                        $('#infomodal').modal({show:true, backdrop:'static'})  // 弹起"提示"模态框
+                        $('#inforz').html('<span style="font-weight:bold; margin-right:10px">已经拒绝</span>')
+                        $('#infoclose').click(function(){  // 点击关闭按钮，刷新当前页
+                            location.reload()
+                        })
+                }
+                },
+                error: function(){
+                    console.log('404..')
+                },
+            })
+                })
+
+ })
+//回滚按钮
+    $('.rollback').click(function (){
+        var id = $(this).attr('ckid')
+        $('#action').modal({show:true, backdrop:'static'})
+            $('#actioncontent').html('<span style="font-weight:bold; margin-right:10px">是否回滚？</span>')
+            $('#actionsave').unbind('click').bind('click', function(){
+            $('#action').modal('hide')
+            $.ajax({
+                type: "put",
+                url: '{% url "inception_list" %}' + id,
+                data: {},
+                dataType: "json",
+                success: function(result){
+                    var execute_time = result.execute_time
+                    var affected_rows = result.affected_rows
+                    if (result.status == 0){
+                        $('#prompttitle').text('服务器提示')
+                            $('#infomodal').modal({show: true, backdrop: 'static'})  // 弹起"提示"模态框
+                            $('#inforz').html('<span style="font-weight:bold; margin-right:10px">语句耗时：' + execute_time + '秒<br>影响行数：' + affected_rows + '行</span>')
+                        $('#infoclose').click(function(){  // 点击关闭按钮，刷新当前页
+                                location.reload()
+                            })
+                    }
+                },
+                error: function(){
+                    console.log('404..')
+                },
+            })
+ })
+
+//语句详情按钮
+    $('.details').click(function (){
+        var id = $(this).attr('ckid')
+        $.ajax({
+            type: 'post',
+            url: '{% url "inception_list" %}' + id,
+            data: {todo:'details'},
+            dataType: "json",
+            success: function(result){
+                console.log(result)
+                if (result.status == 0){
+                    var sqlcontent = result.data
+                    $('#prompttitle').text('SQL语句详情')
+                    $('#infomodal').modal({show:true, backdrop:'static'})  // 弹起"提示"模态框
+                    $('#inforz').html('<span style="font-weight:bold; margin-right:10px">' + sqlcontent + '</span>')
+                    $('#infoclose').click(function(){  // 点击关闭按钮，刷新当前页
+                        location.reload()
+                    })
+                }
+                },
+            error: function(){
+                console.log('404..')
+            },
+        })
+    })
+
+//备注详情按钮
+    $('.sqlnote').click(function (){
+        var id = $(this).attr('ckid')
+        var user_one = request.user
+        $.ajax({
+            type: 'post',
+            url: '{% url "inception_list" %}' + id,
+            data: {todo:'note'},
+            dataType: "json",
+            success: function(result){
+                if (result.status == 0){
+                    var data = result.data
+                    $('#prompttitle').text('SQL语句详情')
+                    $('#infomodal').modal({show:true, backdrop:'static'})  // 弹起"提示"模态框
+                    $('#inforz').html('<span style="font-weight:bold; margin-right:10px">' + data + '</span>')
+                    $('#infoclose').click(function(){  // 点击关闭按钮，刷新当前页
+                        location.reload()
+                    })
+                }
+                },
+            error: function(){
+                console.log('404..')
+            },
+        })
+    })
+
+//暂停按钮
+    $('.pause').click(function (){
+        var id = $(this).attr('ckid')
+        $('#action').modal({show:true, backdrop:'static'})
+            $('#actioncontent').html('<span style="font-weight:bold; margin-right:10px">是否暂停？</span>')
+            $('#actionsave').unbind('click').bind('click', function() {
+                $('#action').modal('hide')
+                $.ajax({
+                type: "post",
+                url: '{% url "inception_list" %}' + id,
+                data: {todo:'pause'},
+                dataType: "json",
+                success: function(result){
+                    if (result.status == 0){
+                        $('#prompttitle').text('服务器提示')
+                        $('#infomodal').modal({show:true, backdrop:'static'})  // 弹起"提示"模态框
+                        $('#inforz').html('<span style="font-weight:bold; margin-right:10px">暂停成功</span>')
+                        $('#infoclose').click(function(){  // 点击关闭按钮，刷新当前页
+                            location.reload()
+                        })
+                }
+                },
+                error: function(){
+                    console.log('404..')
+                },
+            })
+                })
+
+ })
+
+</script>
+{% endblock %}

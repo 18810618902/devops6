@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-2">
+      <table>
+                <thead>
+                    <th>inc_test</th>
+                </thead>
+                {% for name in inc_test %}
+                    <tr>
+                        <td>{{ name }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+  </div>
+  <div class="col-md-2">
+      <table>
+        <thead>
+        <th>inc_test</th>
+        </thead>
+        {% for name in inc_test2 %}
+            <tr>
+                <td>{{ name }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+  </div>
+</div>
+{% endblock %}
