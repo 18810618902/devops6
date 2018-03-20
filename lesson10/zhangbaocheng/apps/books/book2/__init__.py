@@ -15,7 +15,6 @@ class BookAddView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     增加
     """
     model = Book
-    from_class = BookForm
     template_name = 'books/book_add.html'
     fields = ['name', 'publisher', 'authors', 'publication_date']
     success_message = 'Add %(name)s Successful'
