@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+  {% block title %}知识库{% endblock %}
+
+  {% block breadcrunb %}
+      <h1>
+         知识库
+        <small>Version 2.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">知识库</li>
+      </ol>
+  {% endblock %}
+
+
+
+{% block content %}
+
+<div class="row">
+<!-- Left col -->
+<div class="col-md-12">
+<div class="box box-info">
+
+         <div class="box-header with-border">
+          <h3 class="box-title"><a href="{% url 'work_order:list' %}">返回我的工单列表<a></h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <!-- /.box-header -->
+
+
+       <div class="box-body">
+          <div class="note">
+              {% if query %}
+                下列文章或许能解决您的问题:
+                {% for result in page.object_list %}
+                    <h3><a href="{%  url 'note' result.object.id %}" target="_blank" >{{ result.object.title }}</a></h3><br/>
+                {% empty %}
+                         <script type="text/javascript">
+　　                          window.location.href=" {% url 'work_order:list' %}";
+　　                      </script>
+                {% endfor %}
+                {% if page.has_previous or page.has_next %}
+                    <div>
+                        {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; 上一页{% if page.has_previous %}</a>{% endif %}
+                    |
+                        {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}下一页 &raquo;{% if page.has_next %}</a>{% endif %}
+                    </div>
+                {% endif %}
+              {% endif %}
+
+
+          </div>
+
+       </div>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

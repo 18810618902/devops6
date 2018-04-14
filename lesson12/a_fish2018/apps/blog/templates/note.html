@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+  {% block title %}知识库{% endblock %}
+
+  {% block breadcrunb %}
+      <h1>
+         知识库
+        <small>Version 2.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">知识库</li>
+      </ol>
+  {% endblock %}
+
+
+
+{% block content %}
+
+<div class="row">
+<!-- Left col -->
+<div class="col-md-12">
+<div class="box box-info">
+
+         <div class="box-header with-border">
+          <h3 class="box-title">{{  note.title }}</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <!-- /.box-header -->
+
+
+       <div class="box-body">
+          <div class="note">
+              <p>{{ note.body }}</p>
+          </div>
+
+       </div>
+
+</div>
+</div>
+</div>
+
+{% endblock %}
