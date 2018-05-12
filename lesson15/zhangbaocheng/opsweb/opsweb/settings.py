@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 
 ]
 
-AUTH_USER_MODEL = 'dashboard.UserProfile'
+AUTH_USER_MODEL = 'dashboard.=Profile'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -109,7 +109,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.=AttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -131,14 +131,14 @@ PAGINATION_SETTINGS = {
 
 
 #GITLAB_HTTP_URI = "http://211.152.57.213/"
-#GITLAB_TOKEN = "xAhXAq4LGs7x61DSBjxx"
+#GITLAB_TOKEN = "password"
 
 GITLAB_HTTP_URI = "http://192.168.0.221/"
-GITLAB_TOKEN = "T28SSZzzUxQt116eSuBD"
+GITLAB_TOKEN = "password"
 
 Jenkins_HTTP_URI =  'http://192.168.0.221:81/jenkins/'
-Jenkins_User = 'root'
-Jenkins_User_API_Token = '64394104a1a5a7982b989355a5610378'
+Jenkins_= = 'root'
+Jenkins_=_API_Token = 'password'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -173,10 +173,10 @@ JUMP_PAGE = "jump.html"
 
 EMAIL_HOST = "smtp.163.com"
 EMAIL_PORT = 25
-EMAIL_HOST_USER = "13725578065@163.com"
-EMAIL_HOST_PASSWORD = "baocheng1513657."
+EMAIL_HOST_USER = "asdfasd@163.com"
+EMAIL_HOST_PASSWORD = "password"
 EMAIL_USE_TLS = False
-EMAIL_FROM = "13725578065@163.com"
+EMAIL_FROM = "asdfasd@163.com"
 
 
 LOGGING = {
